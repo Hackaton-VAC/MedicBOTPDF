@@ -62,8 +62,6 @@ namespace HackatonPDF.Controllers
             request.RequestFormat = DataFormat.Json;
             var response = client.Execute<object>(request);
             string pdf_name = "Data/prescription_" + prescription.data.Name.Replace(" ", "_") + "_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss") + ".pdf";
-            //System.IO.File.WriteAllBytes(pdf_name, response.RawBytes);
-            //sendEmail(prescription, response.RawBytes);
 
             /*Send docs email*/
             if (prescription.data.SendToDoc)
@@ -71,8 +69,10 @@ namespace HackatonPDF.Controllers
                 var fromAddress = new MailAddress("medicbot.hackaton@gmail.com", "Medic Bot");
                 var toAddress = new MailAddress(prescription.data.DocEmail, prescription.data.DocName);
                 const string fromPassword = "h4ck4th0n2021";
-                const string subject = "Prescription Copy";
-                const string body = "Hackathon sin H";
+                string subject = $@"Prescription - {prescription.data.Name}";
+                string body = $@"Attached you will find the Prescription created for {prescription.data.Name} at {DateTime.Now.ToString("MM dd yyyy HH:mm:ss")}
+                                Powered by Anvil & TypingDNA
+";
                 var smtp = new SmtpClient
                 {
                     Host = "smtp.gmail.com",
@@ -83,30 +83,23 @@ namespace HackatonPDF.Controllers
                     Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
                 };
                 var message = new MailMessage(fromAddress, toAddress);
-
-                if (!String.IsNullOrEmpty(prescription.data.PatientEmail))
-                {
-                    message.To.Add(prescription.data.PatientEmail);
-                }
                 message.Subject = subject;
                 message.Body = body;
                 Attachment attach;
                 var ms = new MemoryStream(response.RawBytes);
                 attach = new Attachment(ms, $@"prescription_{prescription.data.PatientName}.pdf");
                 message.Attachments.Add(attach);
-                smtp.Send(message);
                 if (!String.IsNullOrEmpty(prescription.data.PatientEmail))
                 {
                     message.To.Add(prescription.data.PatientEmail);
                 }
+                smtp.Send(message);
+
                 return "Ok";
             }
 
             FileContentResult file = File(response.RawBytes, response.ContentType, pdf_name);
             return file;
         }
-
-        
     }
-
 } 

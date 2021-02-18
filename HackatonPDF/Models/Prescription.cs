@@ -69,10 +69,13 @@
         [JsonProperty("DocSign", NullValueHandling = NullValueHandling.Ignore)]
         public string DocSign { get; set; }
 
-        [JsonProperty("EmailList", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("PatientEmail", NullValueHandling = NullValueHandling.Ignore)]
         public string? PatientEmail { get; set; }
 
-        [JsonProperty("EmailList", NullValueHandling = NullValueHandling.Ignore)]
+        [JsonProperty("RecipientName", NullValueHandling = NullValueHandling.Ignore)]
+        public string? RecipientName { get; set; }
+
+        [JsonProperty("SendToDoc", NullValueHandling = NullValueHandling.Ignore)]
         public bool SendToDoc { get; set; }
     }
 
