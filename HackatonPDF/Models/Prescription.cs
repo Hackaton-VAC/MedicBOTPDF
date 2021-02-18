@@ -71,6 +71,9 @@
 
         [JsonProperty("EmailList", NullValueHandling = NullValueHandling.Ignore)]
         public string? PatientEmail { get; set; }
+
+        [JsonProperty("EmailList", NullValueHandling = NullValueHandling.Ignore)]
+        public bool SendToDoc { get; set; }
     }
 
     public partial class Prescription
