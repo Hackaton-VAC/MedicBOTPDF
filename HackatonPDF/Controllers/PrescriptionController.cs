@@ -63,10 +63,46 @@ namespace HackatonPDF.Controllers
             var response = client.Execute<object>(request);
             string pdf_name = "Data/prescription_" + prescription.data.Name.Replace(" ", "_") + "_" + DateTime.Now.ToString("MM_dd_yyyy_HH_mm_ss") + ".pdf";
             //System.IO.File.WriteAllBytes(pdf_name, response.RawBytes);
-            //sendEmail(prescription, pdf_name);
+            //sendEmail(prescription, response.RawBytes);
+
+            /*Send docs email*/
+            var fromAddress = new MailAddress("medicbot.hackaton@gmail.com", "Medic Bot");
+            var toAddress = new MailAddress(prescription.data.DocEmail, prescription.data.DocName);
+            const string fromPassword = "h4ck4th0n2021";
+            const string subject = "Prescription Copy";
+            const string body = "Hackathon sin H";
+            var smtp = new SmtpClient
+            {
+                Host = "smtp.gmail.com",
+                Port = 587,
+                EnableSsl = true,
+                DeliveryMethod = SmtpDeliveryMethod.Network,
+                UseDefaultCredentials = false,
+                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+            };
+            var message = new MailMessage(fromAddress, toAddress);
+            if(!String.IsNullOrEmpty(prescription.data.PatientEmail))
+            {
+                message.To.Add(prescription.data.PatientEmail);
+            }
+            message.Subject = subject;
+            message.Body = body;
+            Attachment attach;
+            var ms = new MemoryStream(response.RawBytes);
+            attach = new Attachment(ms, $@"prescription_{prescription.data.PatientName}.pdf");
+            message.Attachments.Add(attach);
+            smtp.Send(message);
+            /**/
+            if (!String.IsNullOrEmpty(prescription.data.PatientEmail))
+            {
+                message.To.Add(prescription.data.PatientEmail);
+                return "Ok";
+            }
             FileContentResult file = File(response.RawBytes, response.ContentType, pdf_name);
             return file;
         }
+
+        
     }
 
 } 

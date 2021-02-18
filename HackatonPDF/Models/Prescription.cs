@@ -70,7 +70,7 @@
         public string DocSign { get; set; }
 
         [JsonProperty("EmailList", NullValueHandling = NullValueHandling.Ignore)]
-        public List<string> EmailList { get; set; }
+        public string? PatientEmail { get; set; }
     }
 
     public partial class Prescription

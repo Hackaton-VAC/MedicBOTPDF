@@ -5,6 +5,7 @@ using Newtonsoft.Json;
 using RestSharp;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Net;
 using System.Net.Mail;
@@ -43,30 +44,5 @@ namespace HackatonPDF.Controllers
             return file;
         }
 
-        public bool sendEmail(Prescription prescription, string pdf_name, string recipient)
-        {
-            var fromAddress = new MailAddress("arturoantoniotr@gmail.com", "Medic Bot");
-            var toAddress = new MailAddress("arturoantoniotr@gmail.com", "Paciente");
-            const string fromPassword = "Aatr12..";
-            const string subject = "Prescription Copy";
-            const string body = "Aqui ta tu recibo";
-
-            var smtp = new SmtpClient
-            {
-                Host = "smtp.gmail.com",
-                Port = 587,
-                EnableSsl = true,
-                DeliveryMethod = SmtpDeliveryMethod.Network,
-                UseDefaultCredentials = false,
-                Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-            };
-            var message = new MailMessage(fromAddress, toAddress);
-            message.Subject = subject;
-            message.Body = body;
-            message.Attachments.Add(new Attachment(pdf_name));
-            smtp.Send(message);
-
-            return true;
-        }
     }
 }
